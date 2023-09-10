@@ -1,8 +1,11 @@
-const User= require('../models/user')
+const User = require('../models/user');
 const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
+
 function isStringInvalid(string) {
     return string === undefined || string.length === 0;
 }
+
 exports.signup = async (req, res, next) => {
     try {
         const { name, email, phonenumber, password } = req.body;
@@ -20,5 +23,41 @@ exports.signup = async (req, res, next) => {
     } catch (err) {
         console.error(err);
         res.status(500).json({ error: err.message });
+    }
+};
+
+const generateToken = (id, name) => {
+    return jwt.sign({ userid: id, name: name }, process.env.TOKEN_SECRET);
+};
+
+exports.login = async (req, res, next) => {
+    try {
+        const { email, password } = req.body;
+
+        if (isStringInvalid(email) || isStringInvalid(password)) {
+            return res.status(400).json({ error: "All fields are required" });
+        }
+
+        const user = await User.findOne({ where: { email } });
+        if (user) {
+            bcrypt.compare(password, user.password, (err, result) => {
+                if (err) {
+                    res.status(500).json({ message: "Something went wrong" });
+                } else if (result === true) {
+                    res.status(201).json({
+                        success: true,
+                        message: "User logged in successfully",
+                        token: generateToken(user.id, user.name),
+                    });
+                } else {
+                    res.status(401).json({ success: false, message: "Incorrect password" });
+                }
+            });
+        } else {
+            res.status(404).json({ success: false, message: "User not found" });
+        }
+    } catch (err) {
+        console.log(err);
+        res.status(500).json({ message: err.message, success: false });
     }
 };

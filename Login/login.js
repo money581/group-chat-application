@@ -1,19 +1,25 @@
-async function login(event) {
-    try{
-        event.preventDefault();
+async function login(e) {
+    try {
+        e.preventDefault();
         const obj = {
-            email:event.target.email.value,
-            password:event.target.password.value
+            email: e.target.email.value,
+            password: e.target.password.value
+        };
+        
+        const response = await axios.post('http://localhost:3000/user/login', obj);
+
+        if (response.status === 201 && response.data.success) {
+            console.log(response.data);
+            alert("User Successfully logged in");
+            localStorage.setItem('token', response.data.token);
+
+            
+            window.location.href = "./chat.html";
+        } else {
+            throw new Error('Failed to log in'); 
         }
-     const response= await axios.post('http://localhost:3000/user/login',obj)
-        if(response.status=201){
-             alert("User Succesfully logged in")
-        }
-        else{
-            throw new Error('failed to login')
-         }
-        }
-    catch(err){
-        document.body.innerHTML=`<div style="color:red;">${err}</div>`;
+    } catch (err) {
+        
+        document.body.innerHTML += `<div style="color:red">${err}</div>`;
     }
 }

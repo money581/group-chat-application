@@ -7,11 +7,11 @@ const app = express();
 dotenv.config();
 app.use(cors())
 app.use(bodyParser.json({ extended: false }));
-//const userRoute = require('./routers/user');
-//app.use(userRoute)
+const userRoute = require('./routers/user');
+app.use(userRoute)
 sequelize
     .sync()
-    //.sync({force: true})
+   // .sync({force: true})
     .then(result => {
         app.listen(3000);
     })

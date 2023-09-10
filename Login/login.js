@@ -14,7 +14,8 @@ async function login(e) {
             localStorage.setItem('token', response.data.token);
 
             
-            window.location.href = "./chat.html";
+            window.location.href = "../chat/chat.html";
+            
         } else {
             throw new Error('Failed to log in'); 
         }

@@ -1,6 +1,6 @@
 const Sequelize=require('sequelize');
 const sequelize=require('../util/database');
-
+const Chat = require('./chat');
 const User=sequelize.define('user',{
 
   id:{

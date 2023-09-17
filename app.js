@@ -30,8 +30,8 @@ User.belongsToMany(Group, {through:'usergroup'});
 Group.belongsToMany(User,{through:'usergroup'})
 
 sequelize
-.sync()
-//.sync({force: true})
+//.sync()
+.sync({force: true})
 .then(result=>{
    app.listen(3000);
 })
